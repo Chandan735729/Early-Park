@@ -1,0 +1,29 @@
+# Multi-stage Flutter Web Build
+FROM cirrusci/flutter:stable AS builder
+
+# Set working directory
+WORKDIR /app
+
+# Copy pubspec files
+COPY pubspec.* ./
+
+# Get Flutter dependencies
+RUN flutter pub get
+
+# Copy source code
+COPY . .
+
+# Build Flutter web app
+RUN flutter build web --web-renderer html --release
+
+# Production stage with nginx
+FROM nginx:alpine AS production
+
+# Copy built Flutter web app
+COPY --from=builder /app/build/web /usr/share/nginx/html
+
+# Expose port 80
+EXPOSE 80
+
+# Start nginx
+CMD ["nginx", "-g", "daemon off;"]

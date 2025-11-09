@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  # Flask API for ML inference
+  parkinsons-api:
+    build:
+      context: ./early_park/api
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    volumes:
+      - "./final_parkinsons_regressor.pkl:/app/final_parkinsons_regressor.pkl"
+      - "./parkinsons_scaler.pkl:/app/parkinsons_scaler.pkl"
+    environment:
+      - FLASK_ENV=production
+      - FLASK_APP=app.py
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - early-park-network
+
+  # Flutter Web Build (served via nginx)
+  early-park-web:
+    build:
+      context: ./early_park
+      dockerfile: Dockerfile.web
+    ports:
+      - "8080:80"
+    depends_on:
+      - parkinsons-api
+    environment:
+      - API_BASE_URL=http://parkinsons-api:5000
+    networks:
+      - early-park-network
+
+  # Nginx reverse proxy (optional, for production)
+  nginx-proxy:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "./nginx/default.conf:/etc/nginx/conf.d/default.conf"
+    depends_on:
+      - early-park-web
+      - parkinsons-api
+    networks:
+      - early-park-network
+    profiles:
+      - production
+
+networks:
+  early-park-network:
+    driver: bridge
+
+volumes:
+  model-data:
