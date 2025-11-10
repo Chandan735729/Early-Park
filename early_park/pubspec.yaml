@@ -32,7 +32,7 @@ dependencies:
     sdk: flutter
 
   # Audio recording and processing
-  record: ^4.4.4
+  record: ^6.1.2
   audioplayers: 5.2.1
   path_provider: ^2.1.1
   # permission_handler: ^10.4.3  # Commented out for web compatibility
