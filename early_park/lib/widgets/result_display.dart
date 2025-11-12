@@ -6,101 +6,100 @@ import '../providers/prediction_provider.dart';
 class ResultDisplay extends StatelessWidget {
   final PredictionResult result;
 
-  const ResultDisplay({
-    super.key,
-    required this.result,
-  });
+  const ResultDisplay({super.key, required this.result});
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          // Main Result Card
-          _buildMainResultCard(context),
-          
-          const SizedBox(height: 20),
-          
-          // Details Card
-          _buildDetailsCard(context),
-          
-          const SizedBox(height: 20),
-          
-          // Recommendations Card
-          _buildRecommendationsCard(context),
-        ],
-      ),
+    return Column(
+      children: [
+        // Main Result Card
+        _buildMainResultCard(context),
+
+        const SizedBox(height: 20),
+
+        // Details Card
+        _buildDetailsCard(context),
+
+        const SizedBox(height: 20),
+
+        // Recommendations Card
+        _buildRecommendationsCard(context),
+      ],
     );
   }
 
   Widget _buildMainResultCard(BuildContext context) {
     return Card(
-      elevation: 8,
-      child: Container(
-        padding: const EdgeInsets.all(24),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          gradient: LinearGradient(
-            colors: [
-              _getRiskColor().withOpacity(0.1),
-              _getRiskColor().withOpacity(0.05),
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
-        child: Column(
-          children: [
-            // Risk Level Badge
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: BoxDecoration(
-                color: _getRiskColor(),
-                borderRadius: BorderRadius.circular(20),
+          elevation: 8,
+          child: Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              gradient: LinearGradient(
+                colors: [
+                  _getRiskColor().withOpacity(0.1),
+                  _getRiskColor().withOpacity(0.05),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
               ),
-              child: Text(
-                result.riskLevel,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
+            ),
+            child: Column(
+              children: [
+                // Risk Level Badge
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: _getRiskColor(),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    result.riskLevel,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
                 ),
-              ),
+
+                const SizedBox(height: 20),
+
+                // Risk Score Display
+                _buildRiskScoreDisplay(context),
+
+                const SizedBox(height: 20),
+
+                // Interpretation
+                Text(
+                  result.interpretation,
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyLarge?.copyWith(height: 1.5),
+                  textAlign: TextAlign.center,
+                ),
+
+                const SizedBox(height: 16),
+
+                // Timestamp
+                Text(
+                  'Analysis completed: ${DateFormat('MMM dd, yyyy • HH:mm').format(result.timestamp)}',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withOpacity(0.6),
+                  ),
+                ),
+              ],
             ),
-            
-            const SizedBox(height: 20),
-            
-            // Risk Score Display
-            _buildRiskScoreDisplay(context),
-            
-            const SizedBox(height: 20),
-            
-            // Interpretation
-            Text(
-              result.interpretation,
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                height: 1.5,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            
-            const SizedBox(height: 16),
-            
-            // Timestamp
-            Text(
-              'Analysis completed: ${DateFormat('MMM dd, yyyy • HH:mm').format(result.timestamp)}',
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-              ),
-            ),
-          ],
-        ),
-      ),
-    ).animate().fadeIn(duration: 600.ms).slideY(
-      begin: 0.3,
-      end: 0,
-      duration: 600.ms,
-    );
+          ),
+        )
+        .animate()
+        .fadeIn(duration: 600.ms)
+        .slideY(begin: 0.3, end: 0, duration: 600.ms);
   }
 
   Widget _buildRiskScoreDisplay(BuildContext context) {
@@ -132,7 +131,9 @@ class ResultDisplay extends StatelessWidget {
                   Text(
                     'UPDRS Score',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withOpacity(0.7),
                     ),
                   ),
                 ],
@@ -164,15 +165,15 @@ class ResultDisplay extends StatelessWidget {
                 const SizedBox(width: 12),
                 Text(
                   'Analysis Details',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
                 ),
               ],
             ),
-            
+
             const SizedBox(height: 20),
-            
+
             // Key Features Display
             _buildFeatureItem(
               context,
@@ -180,21 +181,21 @@ class ResultDisplay extends StatelessWidget {
               '${(result.features['Jitter(%)'] * 100).toStringAsFixed(3)}%',
               Icons.graphic_eq,
             ),
-            
+
             _buildFeatureItem(
               context,
               'Voice Shimmer',
               '${(result.features['Shimmer'] * 100).toStringAsFixed(2)}%',
               Icons.waves,
             ),
-            
+
             _buildFeatureItem(
               context,
               'Harmony-to-Noise Ratio',
               '${result.features['HNR'].toStringAsFixed(1)} dB',
               Icons.tune,
             ),
-            
+
             _buildFeatureItem(
               context,
               'Age Factor',
@@ -224,16 +225,13 @@ class ResultDisplay extends StatelessWidget {
           ),
           const SizedBox(width: 12),
           Expanded(
-            child: Text(
-              label,
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
+            child: Text(label, style: Theme.of(context).textTheme.bodyMedium),
           ),
           Text(
             value,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
           ),
         ],
       ),
@@ -256,19 +254,21 @@ class ResultDisplay extends StatelessWidget {
                 const SizedBox(width: 12),
                 Text(
                   'Recommendations',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
                 ),
               ],
             ),
-            
+
             const SizedBox(height: 16),
-            
-            ...(_getRecommendations().map((rec) => _buildRecommendationItem(context, rec))),
-            
+
+            ...(_getRecommendations().map(
+              (rec) => _buildRecommendationItem(context, rec),
+            )),
+
             const SizedBox(height: 16),
-            
+
             // Disclaimer
             Container(
               padding: const EdgeInsets.all(12),
@@ -321,9 +321,9 @@ class ResultDisplay extends StatelessWidget {
           Expanded(
             child: Text(
               recommendation,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                height: 1.4,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(height: 1.4),
             ),
           ),
         ],

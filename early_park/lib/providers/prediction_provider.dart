@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter/foundation.dart';
 import '../services/ml_service.dart';
 import '../models/audio_features.dart';
@@ -49,24 +50,30 @@ class PredictionProvider extends ChangeNotifier {
       _processingProgress = 0.0;
       notifyListeners();
 
-      // Step 1: Extract features (30% progress)
-      _processingProgress = 0.1;
+      // Complete prediction in one API call with URL fallback
+      _processingProgress = 0.2;
       notifyListeners();
       
-      final features = await _mlService.extractAudioFeatures(audioPath);
-      _processingProgress = 0.3;
+      debugPrint('🚀 Starting complete prediction from provider...');
+      
+      // Generate random age between 18-80 for realistic testing
+      final random = Random();
+      final randomAge = 18 + random.nextInt(63); // 18-80 years
+      final randomSex = random.nextInt(2); // 0 or 1
+      
+      debugPrint('📝 Using age: $randomAge, sex: $randomSex');
+      final completeResult = await _mlService.predictComplete(audioPath, age: randomAge.toDouble(), sex: randomSex);
+      debugPrint('📊 API Response received: ${completeResult.toString()}');
+      
+      _processingProgress = 0.9;
       notifyListeners();
       
-      // Step 2: Send to ML API (60% progress)
-      _processingProgress = 0.5;
-      notifyListeners();
+      // Extract features from the complete result
+      final featuresData = completeResult['features'] as Map<String, dynamic>;
+      final features = AudioFeatures.fromMap(featuresData);
       
-      final prediction = await _mlService.predictParkinsonRisk(features);
-      _processingProgress = 0.8;
-      notifyListeners();
-      
-      // Step 3: Process results (100% progress)
-      _lastPrediction = _createPredictionResult(prediction, features);
+      // Create prediction result
+      _lastPrediction = _createPredictionResult(completeResult, features);
       _processingProgress = 1.0;
       _state = PredictionState.completed;
       notifyListeners();

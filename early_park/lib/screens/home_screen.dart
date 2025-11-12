@@ -48,57 +48,61 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            children: [
-              // Header Section
-              _buildHeaderSection(context),
-              
-              const SizedBox(height: 40),
-              
-              // Recording Section
-              Expanded(
-                child: Consumer2<AudioProvider, PredictionProvider>(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              children: [
+                // Header Section
+                _buildHeaderSection(context),
+
+                const SizedBox(height: 40),
+
+                // Recording Section
+                Consumer2<AudioProvider, PredictionProvider>(
                   builder: (context, audioProvider, predictionProvider, child) {
                     return Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         // Recording Button
                         RecordingButton(
-                          audioProvider: audioProvider,
-                          predictionProvider: predictionProvider,
-                        ).animate().fadeIn(duration: 600.ms).scale(
-                          begin: const Offset(0.8, 0.8),
-                          end: const Offset(1.0, 1.0),
-                          duration: 600.ms,
-                        ),
-                        
+                              audioProvider: audioProvider,
+                              predictionProvider: predictionProvider,
+                            )
+                            .animate()
+                            .fadeIn(duration: 600.ms)
+                            .scale(
+                              begin: const Offset(0.8, 0.8),
+                              end: const Offset(1.0, 1.0),
+                              duration: 600.ms,
+                            ),
+
                         const SizedBox(height: 40),
-                        
+
                         // Status and Results
                         if (predictionProvider.isProcessing)
                           _buildProcessingIndicator(predictionProvider),
-                        
+
                         if (predictionProvider.hasResult)
-                          Expanded(
-                            child: ResultDisplay(
-                              result: predictionProvider.lastPrediction!,
-                            ).animate().fadeIn(duration: 800.ms).slideY(
-                              begin: 0.3,
-                              end: 0,
-                              duration: 800.ms,
-                            ),
-                          ),
-                        
+                          ResultDisplay(
+                                    result:
+                                        predictionProvider.lastPrediction!,
+                                  )
+                                  .animate()
+                                  .fadeIn(duration: 800.ms)
+                                  .slideY(
+                                    begin: 0.3,
+                                    end: 0,
+                                    duration: 800.ms,
+                                  ),
+
                         if (audioProvider.errorMessage != null)
                           _buildErrorCard(audioProvider.errorMessage!),
                       ],
                     );
                   },
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -109,42 +113,43 @@ class _HomeScreenState extends State<HomeScreen> {
     return Column(
       children: [
         Container(
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.primaryContainer,
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Column(
-            children: [
-              Icon(
-                Icons.mic_rounded,
-                size: 60,
-                color: Theme.of(context).colorScheme.primary,
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primaryContainer,
+                borderRadius: BorderRadius.circular(20),
               ),
-              const SizedBox(height: 16),
-              Text(
-                'Voice-Based Parkinson\'s Detection',
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.onPrimaryContainer,
-                ),
-                textAlign: TextAlign.center,
+              child: Column(
+                children: [
+                  Icon(
+                    Icons.mic_rounded,
+                    size: 60,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Voice-Based Parkinson\'s Detection',
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.onPrimaryContainer,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    'Record your voice for AI-powered early detection analysis',
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onPrimaryContainer.withOpacity(0.8),
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
               ),
-              const SizedBox(height: 12),
-              Text(
-                'Record your voice for AI-powered early detection analysis',
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: Theme.of(context).colorScheme.onPrimaryContainer.withOpacity(0.8),
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-        ).animate().fadeIn(duration: 800.ms).slideY(
-          begin: -0.2,
-          end: 0,
-          duration: 800.ms,
-        ),
+            )
+            .animate()
+            .fadeIn(duration: 800.ms)
+            .slideY(begin: -0.2, end: 0, duration: 800.ms),
       ],
     );
   }

@@ -4,7 +4,7 @@ services:
   # Flask API for ML inference
   parkinsons-api:
     build:
-      context: ./early_park/api
+      context: ./api
       dockerfile: Dockerfile
     ports:
       - "5000:5000"

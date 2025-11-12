@@ -30,14 +30,14 @@ import joblib
 
 class ParkinsonModelTrainer:
     """
-    Comprehensive Parkinson's Disease Model Training Pipeline
+    Improved Parkinson's Disease Model Training Pipeline
     
-    Supports:
-    - Multiple datasets (UCI, custom CSV files)
-    - Various ML algorithms
-    - Hyperparameter tuning
-    - Model evaluation and comparison
-    - Feature importance analysis
+    Key Improvements:
+    - Proper outlier detection and removal
+    - Cross-patient validation (prevents data leakage)
+    - Robust feature scaling
+    - Data quality validation
+    - Feature distribution analysis
     """
     
     def __init__(self):
@@ -47,6 +47,8 @@ class ParkinsonModelTrainer:
         self.best_model = None
         self.best_scaler = None
         self.feature_names = []
+        self.data_quality_report = {}
+        self.feature_selector = None
         
     def download_uci_dataset(self):
         """Download UCI Parkinson's dataset from the web"""

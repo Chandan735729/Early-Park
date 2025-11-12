@@ -35,7 +35,7 @@ dependencies:
   record: ^6.1.2
   audioplayers: 5.2.1
   path_provider: ^2.1.1
-  # permission_handler: ^10.4.3  # Commented out for web compatibility
+  #permission_handler: ^10.4.3  # Commented out for web compatibility
   
   # HTTP requests
   http: 0.13.6

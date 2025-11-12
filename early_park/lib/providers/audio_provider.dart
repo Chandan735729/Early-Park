@@ -39,13 +39,21 @@ class AudioProvider extends ChangeNotifier {
       _hasPermission = true;
       _clearError();
     } else {
-      // Mobile: For now, assume permission is granted
-      // TODO: Add proper mobile permission handling when needed
-      debugPrint(
-        '📱 Mobile: Permission assumed granted (permission_handler not included)',
-      );
-      _hasPermission = true;
-      _clearError();
+      // Mobile: Check if we can record
+      try {
+        bool hasPermission = await _recorder.hasPermission();
+        debugPrint('📱 Record permission check: $hasPermission');
+        _hasPermission = hasPermission;
+        if (!hasPermission) {
+          _setError('Microphone permission denied. Please enable in device settings.');
+        } else {
+          _clearError();
+        }
+      } catch (e) {
+        debugPrint('📱 Permission check failed: $e');
+        _hasPermission = false;
+        _setError('Failed to check microphone permission: $e');
+      }
     }
 
     notifyListeners();
@@ -75,6 +83,8 @@ class AudioProvider extends ChangeNotifier {
           const record.RecordConfig(
             encoder: record.AudioEncoder.wav,
             bitRate: 128000,
+            sampleRate: 44100,
+            numChannels: 2,
           ),
           path: "",
         );
@@ -85,9 +95,14 @@ class AudioProvider extends ChangeNotifier {
           _recordingPath = path.join(directory.path, fileName);
           debugPrint('📱 Starting mobile recording: $_recordingPath');
           await _recorder.start(
-            const record.RecordConfig(
+            record.RecordConfig(
               encoder: record.AudioEncoder.wav,
               bitRate: 128000,
+              sampleRate: 44100,
+              numChannels: 1,
+              autoGain: true,
+              echoCancel: true,
+              noiseSuppress: true,
             ),
             path: _recordingPath!,
           );
